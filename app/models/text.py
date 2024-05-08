@@ -30,6 +30,8 @@ class Text(
     # Define la relación con TextHistory
     histories = db.relationship("TextHistory", backref="text", lazy=True)
 
+    user_id: int = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+
     def save(self) -> "Text":
         db.session.add(self)
         db.session.commit()
