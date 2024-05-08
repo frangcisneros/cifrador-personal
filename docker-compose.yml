@@ -1,0 +1,36 @@
+services:
+  postgresql:
+    container_name: postgresql
+    image: postgres:15.4-bullseye
+    restart: always
+
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: cifrador_db
+      POSTGRES_USER: root
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+
+    volumes:
+      # es buena practica path relativo desde el proyecto ./_data:/var/lib/postgresql
+      - ./_data:/var/lib/postgresql/data
+    networks:
+      - mired
+
+  pg-admin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4:8
+    restart: always
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: franbichir@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - mired
+
+networks:
+  mired:
+    driver: bridge
