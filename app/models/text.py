@@ -52,6 +52,11 @@ class Text(
         encrypted_content = f.encrypt(self.content.encode())
         self.content = encrypted_content.decode()
 
+    def decrypt_content(self, key: bytes) -> None:
+        f = Fernet(key)
+        decrypted_content = f.decrypt(self.content.encode())
+        self.content = decrypted_content.decode()
+
     def change_content(self, new_content: str) -> None:
         # Cambia el contenido del texto y guarda la versión anterior en TextHistory.
         #! ESTO NO SE HACE

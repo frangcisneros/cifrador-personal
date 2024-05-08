@@ -76,6 +76,21 @@ class TextTestCase(unittest.TestCase):
         self.assertNotEqual(text.content, "Hola mundo")
         self.assertIsInstance(text.content, str)
 
+    # metodo para encriptar
+    def test_decrypt_content(self):
+        text = Text()
+        text.content = "Hola mundo"
+        text.length = len(text.content)
+        text.language = "es"
+        text.save()
+
+        key = Fernet.generate_key()
+        text.encrypt_content(key)
+
+        text.decrypt_content(key)
+
+        self.assertEqual(text.content, "Hola mundo")
+
     def test_change_content(self):
         # Crea un objeto Text y guarda una versión
         text = Text()
