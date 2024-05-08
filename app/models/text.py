@@ -5,6 +5,9 @@ from dataclasses import dataclass
 from app import db
 from typing import List
 
+# from app.models.text_history import TextHistory
+from cryptography.fernet import Fernet
+
 
 # Definimos una clase llamada Text utilizando el decorador dataclass
 @dataclass(init=False, repr=True, eq=True)
@@ -24,11 +27,8 @@ class Text(
     language: str = db.Column(
         db.String(120), nullable=False
     )  # columna que indica el idioma del texto
-
-    # TODO: hacer el modelo de text history
-    # history = db.relationship(
-    #     "TextHistory", backref="text", lazy=True
-    # )  # relacion con la tabla 'TextHistory'
+    # Define la relación con TextHistory
+    histories = db.relationship("TextHistory", backref="text", lazy=True)
 
     def save(self) -> "Text":
         db.session.add(self)
@@ -39,11 +39,6 @@ class Text(
         db.session.delete(self)
         db.session.commit()
 
-    # ? No se para que lo uso
-    # @classmethod
-    # def all(cls) -> List["Text"]:
-    #     return cls.query.all()
-
     @classmethod
     def find(cls, id: int) -> "Text":
         return cls.query.get(id)
@@ -51,3 +46,20 @@ class Text(
     @classmethod
     def find_by(cls, **kwargs) -> List["Text"]:
         return cls.query.filter_by(**kwargs).all()
+
+    def encrypt_content(self, key: bytes) -> None:
+        f = Fernet(key)
+        encrypted_content = f.encrypt(self.content.encode())
+        self.content = encrypted_content.decode()
+
+    def change_content(self, new_content: str) -> None:
+        # Cambia el contenido del texto y guarda la versión anterior en TextHistory.
+        #! ESTO NO SE HACE
+        from app.models.text_history import (
+            TextHistory,
+        )  # Importa dentro de la función o método
+
+        old_content = self.content
+        self.content = new_content
+        history = TextHistory(text_id=self.id, content=old_content)
+        history.save()
