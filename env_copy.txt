@@ -1,0 +1,5 @@
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_RECORD_QUERIES = True
+
+DEV_DATABASE_URI='postgresql://root:root@localhost:5433/cifrador_db'
+PROD_DATABASE_URI='postgresql://root:root@localhost:5433/cifrador_db'
