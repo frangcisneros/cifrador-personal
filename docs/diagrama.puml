@@ -1,67 +1,40 @@
 @startuml ClassDiagram
-class Account{
-    -username: str
-    -email: str
-    -password: str
-    -user: User
-    -settings: UserSettings
-    +created_account()
-    +delete_account()
-}
 class User{
-    -creation_date: datetime
-    -last_login_date: datetime
-    -text_records: List[Text]
-    +login(email: str, password: str)
-    +signoff()
-    +insert_text(text: Text)
-    +open_saved_text()
-    +save_text(text: Text)
-    +edit_text(text_id: int, new_text: str)
-    +delete_text(text_id: int)
-    +search_text(keyword: str)
-    +view_profile()
-}
-class UserSettings{
-    -language: str
-    +update_language(language: str)
-    +edit_username(new_username:str)
-    +edit_password(new_password: str)
-}
-class Role{
-    -name:str
-    -description:str
-    +change_role()
-}
-enum Roles{
-    user
-    admin
-}
-class Text{
-    -content: str
-    -length: int
-    -language: str
-    -history: TextHistory
-    +check_length(): bool
-    +encrypt_text()
-}
-class TextHistory{
-    -entries: List[str]
-    +add_entry(entry: str)
-    +view_history()
-}
-class EncryptedText{
-    -data: str
-    -length: int
-    -text_password: str
-    +decipher_text(): str
+    - id: int
+    ' ? ¿Esto es str?
+    - password: str
+    - language: str
+    + username: str
+    + email: str
+    - update_language(language: str)
+    - edit_username(new_username: str)
+    - edit_password(new_password: str)
+    + save()
+    + delete()
+    + find(id: int)
 }
 
-User -- Role
-Role - Roles
-Text -- EncryptedText
-Account-- User
-User -- UserSettings
-User - Text
-Text -- TextHistory
+class Text{
+    - id: int
+    - length: int
+    + content: str
+    + language: str
+    + change_content(new_content: str)
+    + save()
+    + delete()
+    + find(id: int)
+    + encrypt_text(key: bytes)
+    + decrypt_content(key: bytes)
+}
+
+class TextHistory{
+    - id: int
+    + content: str
+    + time_stamp
+    + save()
+    + delete()
+    + find(id: int)
+    + get_versions_of_text(id: int)
+    + change_to_version(id: int)
+}
 @enduml

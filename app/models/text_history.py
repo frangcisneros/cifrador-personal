@@ -26,10 +26,6 @@ class TextHistory(db.Model):
     def find(cls, id: int) -> "TextHistory":
         return cls.query.get(id)
 
-    @classmethod
-    def find_by(cls, **kwargs) -> List["TextHistory"]:
-        return cls.query.filter_by(**kwargs).all()
-
     @staticmethod
     def get_versions_of_text(text_id: int) -> List["TextHistory"]:
         # Obtiene todas las versiones de un texto específico.

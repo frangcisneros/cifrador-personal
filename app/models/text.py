@@ -29,7 +29,6 @@ class Text(
     )  # columna que indica el idioma del texto
     # Define la relación con TextHistory
     histories = db.relationship("TextHistory", backref="text", lazy=True)
-
     user_id: int = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
 
     def save(self) -> "Text":
@@ -44,10 +43,6 @@ class Text(
     @classmethod
     def find(cls, id: int) -> "Text":
         return cls.query.get(id)
-
-    @classmethod
-    def find_by(cls, **kwargs) -> List["Text"]:
-        return cls.query.filter_by(**kwargs).all()
 
     def encrypt_content(self, key: bytes) -> None:
         f = Fernet(key)

@@ -27,7 +27,7 @@ class User(
     email: str = db.Column(
         db.String(120), unique=True, nullable=False
     )  # Columna para el correo electrónico del usuario
-    users_rs = db.relationship("Text", backref="USER", lazy=True)
+    users_rs = db.relationship("Text", backref="user", lazy=True)
 
     # Relación con la tabla 'UserData' (datos de usuario), establecida a través de la propiedad 'user' en la clase UserData
     data = db.relationship("UserData", uselist=False, back_populates="user")  # type: ignore
@@ -51,14 +51,16 @@ class User(
         db.session.delete(self)
         db.session.commit()
 
-    @classmethod
-    def all(cls) -> List["User"]:
-        return cls.query.all()
+    # ? ¿Lo necesito?
+    # @classmethod
+    # def all(cls) -> List["User"]:
+    #     return cls.query.all()
 
     @classmethod
     def find(cls, id: int) -> "User":
         return cls.query.get(id)
 
-    @classmethod
-    def find_by(cls, **kwargs) -> List["User"]:
-        return cls.query.filter_by(**kwargs).all()
+    # ? ¿Lo necesito?
+    # @classmethod
+    # def find_by(cls, **kwargs) -> List["User"]:
+    #     return cls.query.filter_by(**kwargs).all()
