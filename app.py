@@ -1,15 +1,15 @@
 from app import create_app
+from flask import Flask
+from routes.index import index
 
 app = create_app()
 
+
+# register the blueprint
+app.register_blueprint(index)
+
 # https://flask.palletsprojects.com/en/3.0.x/appcontext/
 app.app_context().push()
-
-
-@app.get("/")
-def index():
-    return "Hello World"
-
 
 if __name__ == "__main__":
     """
