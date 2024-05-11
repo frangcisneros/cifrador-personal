@@ -105,24 +105,25 @@ class UserTestCase(unittest.TestCase):
         user.delete()
         self.assertIsNone(User.find(user.id))
 
-    def test_user_all(self):
+    # * borrado en el codigo de user.py
+    # def test_user_all(self):
 
-        data = UserData()
-        data.firstname = "Pablo"
-        data.lastname = "Prats"
-        data.address = "Address 1234"
-        data.city = "San Rafael"
-        data.country = "Argentina"
-        data.phone = "54260123456789"
+    #     data = UserData()
+    #     data.firstname = "Pablo"
+    #     data.lastname = "Prats"
+    #     data.address = "Address 1234"
+    #     data.city = "San Rafael"
+    #     data.country = "Argentina"
+    #     data.phone = "54260123456789"
 
-        user = User(data)
-        user.email = "test@test.com"
-        user.username = "pabloprats"
-        user.password = "Qvv3r7y"
-        user.save()
+    #     user = User(data)
+    #     user.email = "test@test.com"
+    #     user.username = "pabloprats"
+    #     user.password = "Qvv3r7y"
+    #     user.save()
 
-        users = User.all()
-        self.assertGreaterEqual(len(users), 1)
+    #     users = User.all()
+    #     self.assertGreaterEqual(len(users), 1)
 
     def test_user_find(self):
 

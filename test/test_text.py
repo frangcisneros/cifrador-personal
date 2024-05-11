@@ -113,6 +113,35 @@ class TextTestCase(unittest.TestCase):
         self.assertIsNotNone(history)
         self.assertEqual(history.content, old_content)
 
+    # test para comprobar que funciona la relacion entres usuarios y textos
+    def test_user_text(self):
+        from app.models.user import User
+        from app.models.user_data import UserData
+
+        # Crea un objeto UserData con información de prueba
+        data = UserData()
+        data.firstname = "Pablo"
+        data.lastname = "Prats"
+        data.address = "Address 1234"
+        data.city = "San Rafael"
+        data.country = "Argentina"
+        data.phone = "54260123456789"
+
+        # Crea un objeto User y establece sus atributos
+        user = User(data)
+        user.email = "test@test.com"
+        user.username = "pabloprats"
+        user.password = "Qvv3r7y"
+        user.save()
+
+        # Crea un objeto Text y establece sus atributos
+        text = Text()
+        text.content = "Hello world"
+        text.length = len(text.content)
+        text.language = "en"
+        text.user_id = user.id
+        text.save()
+
 
 if __name__ == "__main__":
     unittest.main()

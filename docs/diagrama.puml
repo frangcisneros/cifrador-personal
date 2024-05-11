@@ -1,7 +1,8 @@
 @startuml ClassDiagram
+'? Deberia utilizar UserData o juntarlos
 class User{
     - id: int
-    ' ? ¿Esto es str?
+    '? ¿Esto es str?
     - password: str
     - language: str
     + username: str
