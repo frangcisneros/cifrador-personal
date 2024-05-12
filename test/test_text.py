@@ -1,8 +1,7 @@
 import unittest
 from flask import current_app
 from app import create_app, db
-from app.models.text import Text
-from app.models.text_history import TextHistory
+from app.models import Text, TextHistory
 from cryptography.fernet import Fernet
 
 
@@ -21,41 +20,38 @@ class TextTestCase(unittest.TestCase):
     def test_app(self):
         self.assertIsNotNone(current_app)
 
-    def test_text(self):
-        text = Text()
+    def set_text_attributes(self, text):
         text.content = "Hola mundo"
         text.length = len(text.content)
         text.language = "es"
+
+    def assert_text_content(self, text):
         self.assertEqual(text.content, "Hola mundo")
         self.assertEqual(text.length, 10)
         self.assertEqual(text.language, "es")
+
+    def test_text(self):
+        text = Text()
+        self.set_text_attributes(text)
+        self.assert_text_content(text)
 
     def test_text_save(self):
         text = Text()
-        text.content = "Hola mundo"
-        text.length = len(text.content)
-        text.language = "es"
+        self.set_text_attributes(text)
         text.save()
-
         self.assertGreaterEqual(text.id, 1)
-        self.assertEqual(text.content, "Hola mundo")
-        self.assertEqual(text.length, 10)
-        self.assertEqual(text.language, "es")
+        self.assert_text_content(text)
 
     def test_text_delete(self):
         text = Text()
-        text.content = "Hola mundo"
-        text.length = len(text.content)
-        text.language = "es"
+        self.set_text_attributes(text)
         text.save()
         text.delete()
         self.assertIsNone(Text.query.get(text.id))
 
     def test_text_find(self):
         text = Text()
-        text.content = "Hola mundo"
-        text.length = len(text.content)
-        text.language = "es"
+        self.set_text_attributes(text)
         text.save()
         text_find = Text.find(1)
         self.assertIsNotNone(text_find)
@@ -64,9 +60,7 @@ class TextTestCase(unittest.TestCase):
 
     def test_encrypt_content(self):
         text = Text()
-        text.content = "Hola mundo"
-        text.length = len(text.content)
-        text.language = "es"
+        self.set_text_attributes(text)
         text.save()
 
         key = Fernet.generate_key()
@@ -79,9 +73,7 @@ class TextTestCase(unittest.TestCase):
     # metodo para encriptar
     def test_decrypt_content(self):
         text = Text()
-        text.content = "Hola mundo"
-        text.length = len(text.content)
-        text.language = "es"
+        self.set_text_attributes(text)
         text.save()
 
         key = Fernet.generate_key()
@@ -94,9 +86,7 @@ class TextTestCase(unittest.TestCase):
     def test_change_content(self):
         # Crea un objeto Text y guarda una versión
         text = Text()
-        text.content = "Hello world"
-        text.length = len(text.content)
-        text.language = "en"
+        self.set_text_attributes(text)
         text.save()
 
         old_content = text.content
@@ -136,9 +126,7 @@ class TextTestCase(unittest.TestCase):
 
         # Crea un objeto Text y establece sus atributos
         text = Text()
-        text.content = "Hello world"
-        text.length = len(text.content)
-        text.language = "en"
+        self.set_text_attributes(text)
         text.user_id = user.id
         text.save()
 

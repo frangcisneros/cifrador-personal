@@ -17,11 +17,14 @@ class TextHistoryTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_text_history_save(self):
-        text = Text()
+    def initialize_text(self, text):
         text.content = "Hola mundo"
         text.length = len(text.content)
         text.language = "es"
+
+    def test_text_history_save(self):
+        text = Text()
+        self.initialize_text(text)
         text.save()
 
         # Guarda una versión del texto
@@ -37,9 +40,7 @@ class TextHistoryTestCase(unittest.TestCase):
     def test_change_to_version(self):
         # Crea un texto y guarda dos versiones
         text = Text()
-        text.content = "Hello world"
-        text.length = len(text.content)
-        text.language = "en"
+        self.initialize_text(text)
         text.save()
 
         version1 = TextHistory()
