@@ -1,12 +1,17 @@
-from app import create_app
+from app import create_app, db
 from flask import Flask
-from routes.index import index
+from app.routes.index import index
+from app.models import Text, TextHistory, User, Role, UserData
 
 app = create_app()
 
 
 # register the blueprint
 app.register_blueprint(index)
+
+with app.app_context():
+    # Create tables
+    db.create_all()
 
 # https://flask.palletsprojects.com/en/3.0.x/appcontext/
 app.app_context().push()

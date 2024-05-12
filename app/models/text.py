@@ -30,6 +30,8 @@ class Text(
     # Define la relación con TextHistory
     histories = db.relationship("TextHistory", backref="text", lazy=True)
     user_id: int = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    encrypted: bool = db.Column(db.Boolean, default=False)
+    key: bytes = db.Column(db.LargeBinary, nullable=True)
 
     def save(self) -> "Text":
         db.session.add(self)
@@ -40,19 +42,31 @@ class Text(
         db.session.delete(self)
         db.session.commit()
 
+    def __init__(self, content: str = "default text", language: str = "es"):
+        self.content = content
+        self.length = len(content)
+        self.language = language
+
     @classmethod
     def find(cls, id: int) -> "Text":
         return cls.query.get(id)
 
-    def encrypt_content(self, key: bytes) -> None:
+    @classmethod
+    def all(cls) -> List["Text"]:
+        return cls.query.all()
+
+    def encrypt_content(self, key: bytes = Fernet.generate_key()) -> None:
+        self.key = key
         f = Fernet(key)
         encrypted_content = f.encrypt(self.content.encode())
         self.content = encrypted_content.decode()
+        self.encrypted = True
 
     def decrypt_content(self, key: bytes) -> None:
         f = Fernet(key)
         decrypted_content = f.decrypt(self.content.encode())
         self.content = decrypted_content.decode()
+        self.encrypted = False
 
     def change_content(self, new_content: str) -> None:
         # Cambia el contenido del texto y guarda la versión anterior en TextHistory.
