@@ -31,7 +31,7 @@ class User(
     data = db.relationship("UserData", uselist=False, back_populates="user")  # type: ignore
 
     # Constructor de la clase User, que puede recibir un objeto UserData opcionalmente
-    def __init__(self, user_data: UserData = None):
+    def __init__(self, user_data: UserData):
         self.data = user_data
 
     """
@@ -58,7 +58,6 @@ class User(
     def find(cls, id: int) -> "User":
         return db.session.get(cls, id)
 
-    # ? ¿Lo necesito?
-    # @classmethod
-    # def find_by(cls, **kwargs) -> List["User"]:
-    #     return cls.query.filter_by(**kwargs).all()
+    @classmethod
+    def find_by(cls, **kwargs) -> List["User"]:
+        return cls.query.filter_by(**kwargs).all()

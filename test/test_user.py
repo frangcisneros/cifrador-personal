@@ -110,6 +110,13 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(user_find.id, user.id)
         self.assertEqual(user_find.email, user.email)
 
+    def test_user_find_by(self):
+        data = self.create_test_user_data()
+        user = self.create_user_instance(data)
+        user.save()
+        user_find = User.find_by(username="pabloprats")
+        print(user_find[0].username)
+
 
 if __name__ == "__main__":
     # Ejecuta el conjunto de pruebas si el script se ejecuta directamente

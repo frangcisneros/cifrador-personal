@@ -79,3 +79,7 @@ class Text(
         self.content = new_content
         history = TextHistory(text_id=self.id, content=old_content)
         history.save()
+
+    @classmethod
+    def find_by(cls, **kwargs) -> List["Text"]:
+        return cls.query.filter_by(**kwargs).all()
