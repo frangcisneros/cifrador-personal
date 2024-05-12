@@ -2,6 +2,7 @@ import unittest
 from flask import current_app
 from app import create_app, db
 from app.models import User, UserData
+from app.services import Security
 
 
 class UserTestCase(unittest.TestCase):
@@ -45,13 +46,14 @@ class UserTestCase(unittest.TestCase):
         user = User(data)
         user.email = "test@test.com"
         user.username = "pabloprats"
-        user.password = "Qvv3r7y"
+        user.password = Security.generate_password("Qvv3r7y")
         return user
 
     def verify_user_attributes(self, user):
         self.assertTrue(user.email, "test@test.com")
         self.assertTrue(user.username, "pabloprats")
-        self.assertTrue(user.password, "Qvv3r7y")
+        self.assertIsNotNone(user.password)
+        self.assertTrue(Security.check_password(user.password, "Qvv3r7y"))
         self.assertIsNotNone(user.data)
         self.assertTrue(user.data.address, "Address 1234")
         self.assertTrue(user.data.firstname, "Pablo")

@@ -1,5 +1,5 @@
 # Importa el decorador dataclass desde el módulo dataclasses
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 # Importa la clase UserData desde el archivo user_data.py en el mismo directorio
 from .user_data import UserData
@@ -21,9 +21,7 @@ class User(
     username: str = db.Column(
         db.String(80), unique=True, nullable=False
     )  # Columna para el nombre de usuario
-    password: str = db.Column(
-        db.String(120), nullable=False
-    )  # Columna para la contraseña del usuario
+    password: str = db.Column("password", db.String(255), nullable=False)
     email: str = db.Column(
         db.String(120), unique=True, nullable=False
     )  # Columna para el correo electrónico del usuario
@@ -42,7 +40,7 @@ class User(
     Puede llegar a contradecir los principios SOLID http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod, ya que el modelo tiene responsabilidades de persistencia y de negocio.
     """
 
-    def save(self) -> "User":
+    def save(self):
         db.session.add(self)
         db.session.commit()
         return self
@@ -58,7 +56,7 @@ class User(
 
     @classmethod
     def find(cls, id: int) -> "User":
-        return cls.query.get(id)
+        return db.session.get(cls, id)
 
     # ? ¿Lo necesito?
     # @classmethod
