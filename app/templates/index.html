@@ -1,5 +1,15 @@
 <a href="/logout">Cerrar sesión</a>
 
+{% with message = get_flashed_messages() %}
+{% if message %}
+<ul>
+    {% for msg in message %}
+    <li>{{ msg }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
 <h1>Encriptador</h1>
 
 <form action="/encrypt" method="POST">
@@ -24,7 +34,16 @@
             <input type="hidden" name="text_id" value="{{ text.id }}">
             <button type="submit">Encriptar</button>
         </form>
+        <form action="/edit" method="POST">
+            <input type="hidden" name="text_id" value="{{ text.id }}">
+            <input type="text" name="new_content" placeholder="Nuevo contenido">
+            <button type="submit">Editar</button>
+        </form>
         {% endif %}
+        <form action="/delete" method="POST">
+            <input type="hidden" name="text_id" value="{{ text.id }}">
+            <button type="submit">Eliminar</button>
+        </form>
     </div>
     {% endfor %}
 </div>

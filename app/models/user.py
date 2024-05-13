@@ -25,6 +25,7 @@ class User(
     email: str = db.Column(
         db.String(120), unique=True, nullable=False
     )  # Columna para el correo electrónico del usuario
+    # Relación con la tabla 'Text' (texto), establecida a través de la propiedad 'user' en la clase Text
     users_rs = db.relationship("Text", backref="user", lazy=True)
 
     # Relación con la tabla 'UserData' (datos de usuario), establecida a través de la propiedad 'user' en la clase UserData

@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, flash
 from app.models import Text, User, UserData
-from cryptography.fernet import Fernet
-import hashlib
+
+# from cryptography.fernet import Fernet
+# import hashlib
 import base64
 
 index = Blueprint("index", __name__)
@@ -38,7 +39,11 @@ def register():
     user.email = request.form["email"]
     user.username = request.form["new_username"]
     user.password = request.form["new_password"]
-    user.save()
+    try:
+        user.save()
+    except:
+        error = "User or email already exists"
+        flash(error)
     return redirect("/")
 
 
@@ -102,11 +107,37 @@ def decrypt():
 
     text = Text.find(text_id)
     if text:
-        text.decrypt_content(decrypt_key)
-        text.save()
+        try:
+            text.decrypt_content(decrypt_key)
+            text.save()
+        except:
+            error = "Invalid key"
+            flash(error)
         return redirect("/home")
     else:
         return redirect("/home")
+
+
+@index.route("/delete", methods=["POST"])
+def delete():
+    text_id = int(request.form["text_id"])
+    text = Text.find(text_id)
+    if text:
+        text.delete()
+        return redirect("/home")
+    else:
+        return redirect("/home")
+
+
+@index.route("/edit", methods=["POST"])
+def edit():
+    text_id = int(request.form["text_id"])
+    text = Text.find(text_id)
+    new_content = request.form["new_content"]
+    text.content = new_content
+    text.length = len(new_content)
+    text.save()
+    return redirect("/home")
 
 
 @index.route("/encrypt-again", methods=["POST"])
