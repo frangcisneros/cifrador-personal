@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, flash
 from app.models import Text, User, UserData
 from cryptography.fernet import Fernet
 import hashlib
@@ -47,8 +47,9 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     global user
-    user = User.find_by(username=username, password=password)[0]
-    if user:
+    list_user = User.find_by(username=username, password=password)
+    if list_user:
+        user = list_user[0]
         if type(request.form.get("remember")) == str:
             global username_saved
             global password_saved
@@ -56,6 +57,8 @@ def login():
             password_saved = password
         return redirect("/home")
     else:
+        error = "Invalid credentials"
+        flash(error)
         return redirect("/")
 
 

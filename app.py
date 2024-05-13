@@ -2,8 +2,10 @@ from app import create_app, db
 from flask import Flask
 from app.routes.index import index
 from app.models import Text, TextHistory, User, Role, UserData
+import os
 
 app = create_app()
+app.secret_key = os.environ.get("SECRET_KEY")
 
 
 # register the blueprint
