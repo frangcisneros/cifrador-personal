@@ -1,8 +1,10 @@
 from app import create_app, db
 from flask import Flask
 from app.routes.index import index
-from app.models import Text, TextHistory, User, Role, UserData
+from app.models import Text, TextHistory, Role, User, UserData
 import os
+from app.services import roles
+
 
 app = create_app()
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -14,11 +16,17 @@ app.register_blueprint(index)
 with app.app_context():
     # Create tables
     db.create_all()
+    #! NO SE SI LAS ESTOY LLAMANDO CONSTANTEMENTE TENGO QUE BUSCAR LA FORMA DE LLAMARLAS UNA SOLA VEZ
+    roles.create_admin_role()
+    roles.create_user_role()
+    roles.create_admin_user()
+
 
 # https://flask.palletsprojects.com/en/3.0.x/appcontext/
 app.app_context().push()
 
 if __name__ == "__main__":
+
     """
     Server Startup
     Ref: https://flask.palletsprojects.com/en/3.0.x/api/#flask.Flask.run

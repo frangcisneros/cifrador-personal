@@ -67,6 +67,11 @@ def login():
         return redirect("/")
 
 
+@index.route("/admin")
+def admin():
+    return render_template("admin.html")
+
+
 @index.route("/encrypt", methods=["POST"])
 def encrypt():
     text = Text(content=request.form["content"])
@@ -93,9 +98,12 @@ def home():
     global user
     if user is not None:
         texts = Text.find_by(user_id=user.id)
-    for text in texts:
-        print(type(text.key))
-    return render_template("index.html", texts=texts)
+    if texts is None:
+        texts = []
+    else:
+        for text in texts:
+            print(type(text.key))
+    return render_template("index.html", texts=texts, user=user)
 
 
 @index.route("/decrypt", methods=["POST"])
@@ -160,3 +168,10 @@ def logout():
     username_saved = None
     password_saved = None
     return redirect("/")
+
+
+@index.route("/user_panel")
+def user_panel():
+    all_users = User.all()
+    print(all_users)
+    return render_template("user_panel.html", all_users=all_users)

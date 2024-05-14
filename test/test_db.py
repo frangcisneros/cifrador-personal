@@ -3,6 +3,7 @@ from sqlalchemy import text
 
 from app import create_app, db
 
+
 class ConnectionTestCase(unittest.TestCase):
     def setUp(self):
         # Crea una instancia de la aplicación Flask para pruebas
@@ -25,8 +26,9 @@ class ConnectionTestCase(unittest.TestCase):
         # Ejecuta una consulta de prueba en la base de datos
         result = db.session.query(text("'Hello world'")).one()
         # Verifica que el resultado de la consulta sea 'Hello world'
-        self.assertEqual(result[0], 'Hello world')
+        self.assertEqual(result[0], "Hello world")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Ejecuta el conjunto de pruebas si el script se ejecuta directamente
     unittest.main()
