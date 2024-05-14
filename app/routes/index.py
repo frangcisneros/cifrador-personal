@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, flash
 from app.models import Text, User, UserData
+from app import db
 
 # from cryptography.fernet import Fernet
 # import hashlib
@@ -10,6 +11,7 @@ index = Blueprint("index", __name__)
 username_saved = None
 password_saved = None
 user = None
+user_data = None
 
 
 @index.route("/")
@@ -52,9 +54,11 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     global user
+    global user_data
     list_user = User.find_by(username=username, password=password)
     if list_user:
         user = list_user[0]
+        user_data = UserData.query.filter_by(user_id=user.id).first()
         if type(request.form.get("remember")) == str:
             global username_saved
             global password_saved
@@ -165,8 +169,12 @@ def encrypt_again():
 def logout():
     global username_saved
     global password_saved
+    global user
+    global user_data
     username_saved = None
     password_saved = None
+    user = None
+    user_data = None
     return redirect("/")
 
 
@@ -175,3 +183,11 @@ def user_panel():
     all_users = User.all()
     print(all_users)
     return render_template("user_panel.html", all_users=all_users)
+
+
+@index.route("/profile")
+def profile():
+    global user
+    global user_data
+    print(user_data)
+    return render_template("profile.html", user=user, user_data=user_data)
