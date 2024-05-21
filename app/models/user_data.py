@@ -34,3 +34,6 @@ class UserData(
 
     # Relación con la tabla 'User' (usuarios), establecida a través de la columna 'user_id'
     user = db.relationship("User", back_populates="data", uselist=False)
+    # Relacion Muchos a Uno bidireccional con Profile
+    profile_id = db.Column("profile_id", db.Integer, db.ForeignKey("profiles.id"))
+    profile = db.relationship("Profile", back_populates="data")

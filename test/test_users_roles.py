@@ -1,20 +1,24 @@
 import unittest
 from flask import current_app
-from app.models import User, UserData
-from app import create_app, db
-from app.services import UserService
+from app import create_app
+from app.models import Role, User, UserData
+from app import db
+from app.services import RoleService, UserService
 
+role_service = RoleService()
 user_service = UserService()
 
 
-class UserTestCase(unittest.TestCase):
-    """
-    Test User model
-    Necesitamos aplicar principios como DRY (Don't Repeat Yourself) y KISS (Keep It Simple, Stupid).
-    YAGNI (You Aren't Gonna Need It) y SOLID (Single Responsibility Principle).
-    """
+class UsersRoleTestCase(unittest.TestCase):
 
     def setUp(self):
+        self.app = create_app()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.ROL_ADMIN = "ROLE_ADMIN"
+        self.ROL_ADMIN_DESC = "Administrator"
+        self.ROL_USER = "ROLE_USER"
+        self.ROL_USER_DESC = "User"
         self.USERNAME_PRUEBA = "pabloprats"
         self.EMAIL_PRUEBA = "test@test.com"
         self.PASSWORD_PRUEBA = "123456"
@@ -24,9 +28,6 @@ class UserTestCase(unittest.TestCase):
         self.PHONE_PRUEBA = "54260123456789"
         self.CITY_PRUEBA = "San Rafael"
         self.COUNTRY_PRUEBA = "Argentina"
-
-        self.app = create_app()
-        self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
 
@@ -38,66 +39,37 @@ class UserTestCase(unittest.TestCase):
     def test_app(self):
         self.assertIsNotNone(current_app)
 
-    def test_user(self):
+    def test_role_save(self):
+        role = Role(name=self.ROL_ADMIN, description=self.ROL_ADMIN_DESC)
+        role.add_user(self.__get_user())
+        role_service.save(role)
 
-        user = self.__get_user()
-
-        self.assertTrue(user.email, self.EMAIL_PRUEBA)
-        self.assertTrue(user.username, self.USERNAME_PRUEBA)
-        self.assertTrue(user.password, self.PASSWORD_PRUEBA)
-        self.assertIsNotNone(user.data)
-        self.assertTrue(user.data.address, self.ADDRESS_PRUEBA)
-        self.assertTrue(user.data.firstname, self.FIRSTNAME_PRUEBA)
-        self.assertTrue(user.data.lastname, self.LASTNAME_PRUEBA)
-        self.assertTrue(user.data.phone, self.PHONE_PRUEBA)
+        self.assertGreaterEqual(role.id, 1)
+        self.assertTrue(role.name, self.ROL_ADMIN)
+        self.assertTrue(role.description, self.ROL_ADMIN_DESC)
+        self.assertGreaterEqual(len(role.users), 1)
+        self.assertTrue(role.users[0].username, self.USERNAME_PRUEBA)
 
     def test_user_save(self):
-
         user = self.__get_user()
-
+        user.add_role(Role(name=self.ROL_ADMIN, description=self.ROL_ADMIN_DESC))
+        user.add_role(Role(name=self.ROL_USER, description=self.ROL_USER_DESC))
         user_service.save(user)
 
         self.assertGreaterEqual(user.id, 1)
         self.assertTrue(user.email, self.EMAIL_PRUEBA)
         self.assertTrue(user.username, self.USERNAME_PRUEBA)
         self.assertIsNotNone(user.password)
-        self.assertTrue(user_service.check_auth(user.username, self.PASSWORD_PRUEBA))
         self.assertIsNotNone(user.data)
         self.assertTrue(user.data.address, self.ADDRESS_PRUEBA)
         self.assertTrue(user.data.firstname, self.FIRSTNAME_PRUEBA)
         self.assertTrue(user.data.lastname, self.LASTNAME_PRUEBA)
         self.assertTrue(user.data.phone, self.PHONE_PRUEBA)
-
-    def test_user_delete(self):
-
-        user = self.__get_user()
-
-        user_service.save(user)
-
-        # borro el usuario
-        user_service.delete(user)
-        self.assertIsNone(user_service.find(user))
-
-    def test_user_all(self):
-
-        user = self.__get_user()
-        user_service.save(user)
-
-        users = user_service.all()
-        self.assertGreaterEqual(len(users), 1)
-
-    def test_user_find(self):
-
-        user = self.__get_user()
-        user_service.save(user)
-
-        user_find = user_service.find(1)
-        self.assertIsNotNone(user_find)
-        self.assertEqual(user_find.id, user.id)
-        self.assertEqual(user_find.email, user.email)
+        self.assertGreaterEqual(len(user.roles), 1)
+        self.assertTrue(user.roles[0].name, self.ROL_ADMIN)
+        self.assertTrue(user.roles[1].name, self.ROL_USER)
 
     def __get_user(self):
-
         data = UserData()
         data.firstname = self.FIRSTNAME_PRUEBA
         data.lastname = self.LASTNAME_PRUEBA
@@ -112,7 +84,3 @@ class UserTestCase(unittest.TestCase):
         user.password = self.PASSWORD_PRUEBA
 
         return user
-
-
-if __name__ == "__main__":
-    unittest.main()

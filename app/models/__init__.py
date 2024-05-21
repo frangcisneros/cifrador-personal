@@ -15,3 +15,4 @@ from .text_history import (
 from .role import (
     Role,
 )
+from .profile import Profile
