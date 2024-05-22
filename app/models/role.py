@@ -14,38 +14,20 @@ from app import db
 class Role(db.Model):
     __tablename__ = "roles"
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name: str = db.Column(db.String(80), nullable=False)
+    name: str = db.Column(db.String(80), unique=True, nullable=False)
     description: str = db.Column(db.String(255), nullable=False)
-    user_role = db.relationship("User", backref="role", lazy=True)
+    # Relacion Muchos a Muchos bidireccional con User
+    users = db.relationship("User", secondary=users_roles, back_populates="roles")
 
     def save(self):
         db.session.add(self)
         db.session.commit()
         return self
 
+    def add_user(self, user):
+        if user not in self.users:
+            self.users.append(user)
 
-# TODO: Implementar metodos para agregar, eliminar y istar usuarios
-# TODO: Ver estos metodos del profesor
-# class Role(db.Model):
-
-#     __tablename__ = "roles"
-
-#     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-#     name: str = db.Column(db.String(80), unique=True, nullable=False)
-
-#     description: str = db.Column(db.String(255), nullable=False)
-
-#     # Relacion Muchos a Muchos bidireccional con User
-
-#     # Flask Web Development Capitulo: Database Relationships Revisited Pag 49,149
-
-#     users = db.relationship("User", secondary=users_roles, back_populates="roles")
-
-# def add_user(self, user):
-#         if user not in self.users:
-#             self.users.append(user)
-
-# def remove_user(self, user):
-#     if user in self.users:
-#         self.users.remove(user)
+    def remove_user(self, user):
+        if user in self.users:
+            self.users.remove(user)

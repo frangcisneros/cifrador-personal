@@ -27,16 +27,14 @@ class User(
     # Relacion Uno a Uno bidireccional con UserData
     role_id: int = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=True)
 
+    # Relacion Muchos a Muchos bidireccional con Role
+    roles = db.relationship("Role", secondary=users_roles, back_populates="users")
+
     # Relación con la tabla 'Text' (texto), establecida a través de la propiedad 'user' en la clase Text
     users_rs = db.relationship("Text", backref="user", lazy=True)
 
     # Relación con la tabla 'UserData' (datos de usuario), establecida a través de la propiedad 'user' en la clase UserData
     data = db.relationship("UserData", uselist=False, back_populates="user")  # type: ignore
-
-    # TODO: Cambios del profesor en roles
-    # Relacion Muchos a Muchos bidireccional con Role
-    # Flask Web Development Capitulo: Database Relationships Revisited Pag 49,149
-    # roles = db.relationship("Role", secondary=users_roles, back_populates='users')
 
     # Constructor de la clase User, que puede recibir un objeto UserData opcionalmente
     def __init__(self, user_data: UserData):
@@ -50,23 +48,25 @@ class User(
         if role in self.roles:
             self.roles.remove(role)
 
-    # def save(self):
-    #     db.session.add(self)
-    #     db.session.commit()
-    #     return self
 
-    # def delete(self) -> None:
-    #     db.session.delete(self)
-    #     db.session.commit()
+#! METODOS ELIMINADOS Y LLEVADOS AL SERVICE DE USER
+# def save(self):
+#     db.session.add(self)
+#     db.session.commit()
+#     return self
 
-    # @classmethod
-    # def all(cls) -> List["User"]:
-    #     return cls.query.all()
+# def delete(self) -> None:
+#     db.session.delete(self)
+#     db.session.commit()
 
-    # @classmethod
-    # def find(cls, id: int) -> "User":
-    #     return db.session.get(cls, id)
+# @classmethod
+# def all(cls) -> List["User"]:
+#     return cls.query.all()
 
-    # @classmethod
-    # def find_by(cls, **kwargs) -> List["User"]:
-    #     return cls.query.filter_by(**kwargs).all()
+# @classmethod
+# def find(cls, id: int) -> "User":
+#     return db.session.get(cls, id)
+
+# @classmethod
+# def find_by(cls, **kwargs) -> List["User"]:
+#     return cls.query.filter_by(**kwargs).all()

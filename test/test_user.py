@@ -97,7 +97,6 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(user_find.email, user.email)
 
     def __get_user(self):
-
         data = UserData()
         data.firstname = self.FIRSTNAME_PRUEBA
         data.lastname = self.LASTNAME_PRUEBA

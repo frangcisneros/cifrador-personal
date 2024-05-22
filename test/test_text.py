@@ -3,6 +3,7 @@ from flask import current_app
 from app import create_app, db
 from app.models import Text, TextHistory
 from cryptography.fernet import Fernet
+from app.services import UserService
 
 
 class TextTestCase(unittest.TestCase):
@@ -122,7 +123,8 @@ class TextTestCase(unittest.TestCase):
         user.email = "test@test.com"
         user.username = "pabloprats"
         user.password = "Qvv3r7y"
-        user.save()
+        user_service = UserService()
+        user_service.save(user)
 
         # Crea un objeto Text y establece sus atributos
         text = Text()
