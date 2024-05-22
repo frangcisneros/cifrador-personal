@@ -1,5 +1,8 @@
 from app.models import Role, User, UserData
 from app import db
+from app.services import UserService
+
+user_service = UserService()
 
 
 def create_admin_role():
@@ -42,4 +45,5 @@ def create_admin_user():
         user.username = "admin"
         user.password = "admin"
         user.role_id = 1
-        user.save()
+
+        user_service.save(user)

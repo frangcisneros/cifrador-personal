@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, flash
 from app.models import Text, User, UserData
 from app import db
+from app.services import UserService
 
 # from cryptography.fernet import Fernet
 # import hashlib
@@ -12,6 +13,7 @@ username_saved = None
 password_saved = None
 user = None
 user_data = None
+user_services = UserService()
 
 
 @index.route("/")
@@ -42,7 +44,7 @@ def register():
     user.username = request.form["new_username"]
     user.password = request.form["new_password"]
     try:
-        user.save()
+        user_services.save(user)
     except:
         error = "User or email already exists"
         flash(error)
@@ -55,9 +57,10 @@ def login():
     password = request.form["password"]
     global user
     global user_data
-    list_user = User.find_by(username=username, password=password)
+    list_user = user_services.check_auth(username, password)
+    # list_user = User.find_by(username=username, password=password)
     if list_user:
-        user = list_user[0]
+        user = user_services.find_by_username(username)
         user_data = UserData.query.filter_by(user_id=user.id).first()
         if type(request.form.get("remember")) == str:
             global username_saved
