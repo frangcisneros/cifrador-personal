@@ -16,7 +16,7 @@ app.register_blueprint(index)
 with app.app_context():
     # Create tables
     db.create_all()
-    #! NO SE SI LAS ESTOY LLAMANDO CONSTANTEMENTE TENGO QUE BUSCAR LA FORMA DE LLAMARLAS UNA SOLA VEZ
+    # TODO: NO SE SI LAS ESTOY LLAMANDO CONSTANTEMENTE TENGO QUE BUSCAR LA FORMA DE LLAMARLAS UNA SOLA VEZ
     roles.create_admin_role()
     roles.create_user_role()
     roles.create_admin_user()
