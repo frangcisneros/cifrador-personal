@@ -40,8 +40,11 @@ class TextHistory(db.Model):
         version = TextHistory.find(version_id)
         #! ESTO NO SE HACE
         from app.models.text import Text  # Importa dentro de la función o método
+        from app.repositories import TextRepository
+
+        text_repository = TextRepository()
 
         if version:
-            text = Text.find(self.text_id)
+            text = text_repository.find(self.text_id)
             text.content = version.content
             db.session.commit()
