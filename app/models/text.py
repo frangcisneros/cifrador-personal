@@ -30,30 +30,7 @@ class Text(
     encrypted: bool = db.Column(db.Boolean, default=False)
     key: bytes = db.Column(db.LargeBinary, nullable=True)
 
-    # TODO: Cambiar los save() al repositorio de textos (que todavia no esta creado)
-
-    def save(self) -> "Text":
-        db.session.add(self)
-        db.session.commit()
-        return self
-
-    def delete(self) -> None:
-        db.session.delete(self)
-        db.session.commit()
-
     def __init__(self, content: str = "default text", language: str = "es"):
         self.content = content
         self.length = len(content)
         self.language = language
-
-    @classmethod
-    def find(cls, id: int) -> "Text":
-        return cls.query.get(id)
-
-    @classmethod
-    def all(cls) -> List["Text"]:
-        return cls.query.all()
-
-    @classmethod
-    def find_by(cls, **kwargs) -> List["Text"]:
-        return cls.query.filter_by(**kwargs).all()

@@ -1,5 +1,8 @@
 from cryptography.fernet import Fernet
 from app.models import Text
+from app.repositories import TextRepository
+
+text_repository = TextRepository()
 
 
 # TODO: Cambiar los save() al repositorio de textos (que todavia no esta creado)
@@ -13,14 +16,14 @@ class EncryptService:
         encrypted_content = f.encrypt(text.content.encode())
         text.content = encrypted_content.decode()
         text.encrypted = True
-        text.save()
+        text_repository.save(text)
 
     def decrypt_content(self, text: Text, key: bytes) -> None:
         f = Fernet(key)
         decrypted_content = f.decrypt(text.content.encode())
         text.content = decrypted_content.decode()
         text.encrypted = False
-        text.save()
+        text_repository.save(text)
 
     def change_content(self, text: Text, new_content: str) -> None:
         # Cambia el contenido del texto y guarda la versión anterior en TextHistory.
@@ -33,4 +36,4 @@ class EncryptService:
         text.content = new_content
         history = TextHistory(text_id=text.id, content=old_content)
         history.save()
-        text.save()
+        text_repository.save(text)

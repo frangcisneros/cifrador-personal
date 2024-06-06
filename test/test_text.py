@@ -4,9 +4,11 @@ from app import create_app, db
 from app.models import Text, TextHistory
 from cryptography.fernet import Fernet
 from app.services import UserService, EncryptService
+from app.repositories import TextRepository
 
 
 encrypt_service = EncryptService()
+text_repository = TextRepository()
 
 
 class TextTestCase(unittest.TestCase):
@@ -42,22 +44,24 @@ class TextTestCase(unittest.TestCase):
     def test_text_save(self):
         text = Text()
         self.set_text_attributes(text)
-        text.save()
+        text_repository.save(text)
+
         self.assertGreaterEqual(text.id, 1)
         self.assert_text_content(text)
 
     def test_text_delete(self):
         text = Text()
         self.set_text_attributes(text)
-        text.save()
-        text.delete()
+        text_repository.save(text)
+        text_repository.delete(text)
+
         self.assertIsNone(Text.query.get(text.id))
 
     def test_text_find(self):
         text = Text()
         self.set_text_attributes(text)
-        text.save()
-        text_find = Text.find(1)
+        text_repository.save(text)
+        text_find = text_repository.find(1)
         self.assertIsNotNone(text_find)
         self.assertEqual(text_find.id, text.id)
         self.assertEqual(text_find.content, text.content)
@@ -65,7 +69,7 @@ class TextTestCase(unittest.TestCase):
     def test_encrypt_content(self):
         text = Text()
         self.set_text_attributes(text)
-        text.save()
+        text_repository.save(text)
 
         key = Fernet.generate_key()
 
@@ -78,7 +82,7 @@ class TextTestCase(unittest.TestCase):
     def test_decrypt_content(self):
         text = Text()
         self.set_text_attributes(text)
-        text.save()
+        text_repository.save(text)
 
         key = Fernet.generate_key()
         encrypt_service.encrypt_content(text, key)
@@ -91,7 +95,7 @@ class TextTestCase(unittest.TestCase):
         # Crea un objeto Text y guarda una versión
         text = Text()
         self.set_text_attributes(text)
-        text.save()
+        text_repository.save(text)
 
         old_content = text.content
 
@@ -133,7 +137,7 @@ class TextTestCase(unittest.TestCase):
         text = Text()
         self.set_text_attributes(text)
         text.user_id = user.id
-        text.save()
+        text_repository.save(text)
 
 
 if __name__ == "__main__":
