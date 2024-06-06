@@ -3,7 +3,10 @@ from flask import current_app
 from app import create_app, db
 from app.models import Text, TextHistory
 from cryptography.fernet import Fernet
-from app.services import UserService
+from app.services import UserService, EncryptService
+
+
+encrypt_service = EncryptService()
 
 
 class TextTestCase(unittest.TestCase):
@@ -66,21 +69,21 @@ class TextTestCase(unittest.TestCase):
 
         key = Fernet.generate_key()
 
-        text.encrypt_content(key)
+        encrypt_service.encrypt_content(text, key)
 
         self.assertNotEqual(text.content, "Hola mundo")
         self.assertIsInstance(text.content, str)
 
-    # metodo para encriptar
+    # metodo para desencritar
     def test_decrypt_content(self):
         text = Text()
         self.set_text_attributes(text)
         text.save()
 
         key = Fernet.generate_key()
-        text.encrypt_content(key)
+        encrypt_service.encrypt_content(text, key)
 
-        text.decrypt_content(key)
+        encrypt_service.decrypt_content(text, key)
 
         self.assertEqual(text.content, "Hola mundo")
 
@@ -94,7 +97,7 @@ class TextTestCase(unittest.TestCase):
 
         # Cambia el contenido
         new_content = "Hola mundo"
-        text.change_content(new_content)
+        encrypt_service.change_content(text, new_content)
 
         # Verifica que el contenido haya cambiado
         self.assertEqual(text.content, new_content)

@@ -5,9 +5,6 @@ from dataclasses import dataclass
 from app import db
 from typing import List
 
-# from app.models.text_history import TextHistory
-from cryptography.fernet import Fernet
-
 
 # Definimos una clase llamada Text utilizando el decorador dataclass
 @dataclass(init=False, repr=True, eq=True)
@@ -33,6 +30,8 @@ class Text(
     encrypted: bool = db.Column(db.Boolean, default=False)
     key: bytes = db.Column(db.LargeBinary, nullable=True)
 
+    # TODO: Cambiar los save() al repositorio de textos (que todavia no esta creado)
+
     def save(self) -> "Text":
         db.session.add(self)
         db.session.commit()
@@ -54,31 +53,6 @@ class Text(
     @classmethod
     def all(cls) -> List["Text"]:
         return cls.query.all()
-
-    def encrypt_content(self, key: bytes = Fernet.generate_key()) -> None:
-        self.key = key
-        f = Fernet(key)
-        encrypted_content = f.encrypt(self.content.encode())
-        self.content = encrypted_content.decode()
-        self.encrypted = True
-
-    def decrypt_content(self, key: bytes) -> None:
-        f = Fernet(key)
-        decrypted_content = f.decrypt(self.content.encode())
-        self.content = decrypted_content.decode()
-        self.encrypted = False
-
-    def change_content(self, new_content: str) -> None:
-        # Cambia el contenido del texto y guarda la versión anterior en TextHistory.
-        #! ESTO NO SE HACE
-        from app.models.text_history import (
-            TextHistory,
-        )  # Importa dentro de la función o método
-
-        old_content = self.content
-        self.content = new_content
-        history = TextHistory(text_id=self.id, content=old_content)
-        history.save()
 
     @classmethod
     def find_by(cls, **kwargs) -> List["Text"]:
