@@ -1,53 +1,57 @@
-from typing import List
-from app.models import Profile
-from app.repositories import ProfileRepository
+@startuml Diagram de Clases
+class Model {
+ clase de SQLAlchemy
+}
 
-repository = ProfileRepository()
+class User {
+    - username: str
+    - email: str
+    - password: str
+}
 
-class ProfileService:
-    """
-    ProfileService class
-    """
-    def __init__(self):
-        pass
+class UserData{
+    - name: str
+    - firstname: str
+    - lastname: str
+    - phone: str
+    - address: str
+    - city: str
+    - country: str
+}
 
-    def save(self, profile: Profile) -> Profile:
-        """
-        Save a profile
-        :param profile: Profile
-        :return: Profile
-        """
-        repository.save(profile)
-        return profile
+class Profile{
+    - name: str
+}
 
-    def update(self, profile: Profile, id: int) -> Profile:
-        """
-        Update a profile
-        :param profile: Profile
-        :param id: int
-        :return: Profile
-        """
-        repository.update(profile, id)
-        return profile
+class Role {
+    - name: str
+    - description: str
+}
 
-    def delete(self, profile: Profile) -> None:
-        """
-        Delete a profile
-        :param profile: Profile
-        """
-        repository.delete(profile)
+class AudiMixin{
+    - created_at: datetime
+    - updated_at: datetime
+    - created_by: int
+    - updated_by: int
+}
 
-    def all(self) -> List[Profile]:
-        """
-        Get all profiles
-        :return: List[Profile]
-        """
-        return repository.all()
+class SoftDeleteMixin {
+    - deleted_at: datetime
 
-    def find(self, id: int) -> Profile:
-        """
-        Get a profile by id
-        :param id: int
-        :return: Profile
-        """
-        return repository.find(id)
+}
+
+Model <|-- User
+SoftDeleteMixin <|-- User
+AudiMixin <|-- User
+Model <|-- Role
+Model <|-- UserData
+SoftDeleteMixin <|-- UserData
+AudiMixin <|-- UserData
+Model <|-- Profile
+SoftDeleteMixin <|-- Profile
+AudiMixin <|-- Profile
+
+User "1" *--- "1" UserData : contiene
+Profile "1" ---- "n" UserData
+User "m" o--o "n" Role
+@enduml
