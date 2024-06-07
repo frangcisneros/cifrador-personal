@@ -1,5 +1,5 @@
 from typing import List
-from app.models import Text
+from app.models import Text, TextHistory
 from app import db
 
 
