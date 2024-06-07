@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, flash
+from flask import Blueprint, render_template, request, redirect, flash, jsonify
 from app.models import Text, User, UserData
 from app import db
 from app.services import UserService
+from app.repositories import UserRepository
 
 # from cryptography.fernet import Fernet
 # import hashlib
@@ -181,11 +182,10 @@ def logout():
     return redirect("/")
 
 
-@index.route("/user_panel")
+@index.route("/user_panel", methods=["GET", "POST"])
 def user_panel():
-    all_users = User.all()
-    print(all_users)
-    return render_template("user_panel.html", all_users=all_users)
+    all_users = UserRepository().all()
+    return jsonify(all_users)
 
 
 @index.route("/profile")
