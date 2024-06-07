@@ -27,3 +27,14 @@ class Text(db.Model):
         self.content = content
         self.length = len(content)
         self.language = language
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "content": self.content,
+            "length": self.length,
+            "language": self.language,
+            "encrypted": self.encrypted,
+            "key": self.key,
+            "user_id": self.user_id,
+        }

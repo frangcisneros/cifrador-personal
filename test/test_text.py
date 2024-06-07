@@ -139,6 +139,19 @@ class TextTestCase(unittest.TestCase):
         text.user_id = user.id
         text_repository.save(text)
 
+    def test_text_json(self):
+        text = Text()
+        self.set_text_attributes(text)
+        text_repository.save(text)
+
+        text_json = text.to_json()
+        self.assertEqual(text_json["id"], text.id)
+        self.assertEqual(text_json["content"], text.content)
+        self.assertEqual(text_json["length"], text.length)
+        self.assertEqual(text_json["language"], text.language)
+        self.assertEqual(text_json["encrypted"], text.encrypted)
+        self.assertEqual(text_json["key"], text.key)
+
 
 if __name__ == "__main__":
     unittest.main()
