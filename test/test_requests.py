@@ -54,9 +54,14 @@ class TestRequests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
 
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_add_text(self):
+        response = requests.post(
+            "http://127.0.0.1:5000/add_text",
+            json={"content": "Hola mundo add", "language": "es"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response.json(), {"message": "Text added successfully"})
 
 
 if __name__ == "__main__":

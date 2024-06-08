@@ -35,6 +35,18 @@ def get_text(id):
         return jsonify({"error": str(e)})
 
 
+@index.route("/add_text", methods=["POST"])
+def add_text():
+    try:
+        content = request.json["content"]
+        language = request.json["language"]
+        text = Text(content=content, language=language)
+        TextRepository().save(text)
+        return jsonify({"message": "Text added successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 # ---------------------------------------------------------------------------- #
 #                rutas descartadas pero guardadas por las dudas                #
 # ---------------------------------------------------------------------------- #
