@@ -17,7 +17,7 @@ class EncryptService:
             key = Fernet.generate_key()
         else:
             key = base64.urlsafe_b64encode((key.encode()).ljust(32, b"\0"))
-        text.key = key
+        text.key = str(key.decode())
         f = Fernet(key)
         encrypted_content = f.encrypt(text.content.encode())
         text.content = encrypted_content.decode()

@@ -63,6 +63,51 @@ class TestRequests(unittest.TestCase):
         self.assertEqual(response.headers["Content-Type"], "application/json")
         self.assertEqual(response.json(), {"message": "Text added successfully"})
 
+    def test_delete_text(self):
+        text = self.__get_text()
+        text_repository.save(text)
+        response = requests.delete("http://127.0.0.1:5000/delete_text/1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        self.assertEqual(response.json(), {"message": "Text deleted successfully"})
+
+    def test_edit_text(self):
+        text = self.__get_text()
+        text_repository.save(text)
+        response = requests.put(
+            "http://127.0.0.1:5000/edit_text/1",
+            json={"content": "Hola mundo edit", "language": "es"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        response = requests.get("http://127.0.0.1:5000/get_text/1")
+        self.assertEqual(response.json()["content"], "Hola mundo edit")
+
+    def test_encrypt_text_manual(self):
+        text = self.__get_text()
+        text_repository.save(text)
+        response = requests.post(
+            "http://127.0.0.1:5000/encrypt_text",
+            json={"text_id": 1, "key": "key"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        response = requests.get("http://127.0.0.1:5000/get_text/1")
+        print(response.json())
+        self.assertEqual(response.json()["encrypted"], True)
+
+    def test_encrypt_text_automated(self):
+        text = self.__get_text()
+        text_repository.save(text)
+        response = requests.post(
+            "http://127.0.0.1:5000/encrypt_text",
+            json={"text_id": 1, "key": None},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        response = requests.get("http://127.0.0.1:5000/get_text/1")
+        self.assertEqual(response.json()["encrypted"], True)
+
 
 if __name__ == "__main__":
     unittest.main()

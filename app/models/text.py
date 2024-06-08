@@ -14,7 +14,7 @@ class Text(db.Model):
     length: int = db.Column(db.Integer, nullable=False)
     language: str = db.Column(db.String(120), nullable=False)
     encrypted: bool = db.Column(db.Boolean, default=False)
-    key: bytes = db.Column(db.LargeBinary, nullable=True)
+    key: str = db.Column(db.String(120), nullable=True)
     # ------------------------------ claves foraneas ----------------------------- #
     user_id: int = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     # ----------------------------- fin clave foranea ---------------------------- #

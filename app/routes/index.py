@@ -1,11 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, flash, jsonify
-from app.models import Text, User, UserData
-from app import db
-from app.services import UserService
-from app.repositories import UserRepository, TextRepository
+from flask import Blueprint, request, jsonify
+from app.models import Text
+from app.services import UserService, TextService, EncryptService
+from app.repositories import TextRepository
 
-# from cryptography.fernet import Fernet
-# import hashlib
 import base64
 
 index = Blueprint("index", __name__)
@@ -43,6 +40,37 @@ def add_text():
         text = Text(content=content, language=language)
         TextRepository().save(text)
         return jsonify({"message": "Text added successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+@index.route("/delete_text/<id>", methods=["DELETE"])
+def delete_text(id):
+    try:
+        text_to_delete = TextRepository().find(id)
+        TextRepository().delete(text_to_delete)
+        return jsonify({"message": "Text deleted successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+@index.route("/edit_text/<id>", methods=["PUT"])
+def edit_text(id):
+    try:
+        text_to_edit = TextRepository().find(id)
+        TextService().edit_content(text_to_edit, request.json["content"])
+        return jsonify({"message": "Text edited successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+@index.route("/encrypt_text", methods=["POST"])
+def encrypt_text():
+    try:
+        text_id = request.json["text_id"]
+        text = TextRepository().find(text_id)
+        EncryptService().encrypt_content(text, request.json["key"])
+        return jsonify({"message": "Text encrypted successfully"})
     except Exception as e:
         return jsonify({"error": str(e)})
 
