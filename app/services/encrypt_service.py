@@ -31,13 +31,3 @@ class EncryptService:
         text.content = decrypted_content.decode()
         text.encrypted = False
         text_repository.save(text)
-
-    def change_content(self, text: Text, new_content: str) -> None:
-        #! ESTO NO SE HACE
-        from app.models.text_history import TextHistory
-
-        old_content = text.content
-        text.content = new_content
-        history = TextHistory(text_id=text.id, content=old_content)
-        history.save()
-        text_repository.save(text)

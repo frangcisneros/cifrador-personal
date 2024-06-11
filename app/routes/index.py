@@ -3,8 +3,6 @@ from app.models import Text
 from app.services import UserService, TextService, EncryptService
 from app.repositories import TextRepository
 
-import base64
-
 index = Blueprint("index", __name__)
 
 username_saved = None
