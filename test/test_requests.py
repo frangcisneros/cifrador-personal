@@ -108,6 +108,22 @@ class TestRequests(unittest.TestCase):
         response = requests.get("http://127.0.0.1:5000/get_text/1")
         self.assertEqual(response.json()["encrypted"], True)
 
+    def test_decrypt_text(self):
+        text = self.__get_text()
+        text_repository.save(text)
+        response = requests.post(
+            "http://127.0.0.1:5000/encrypt_text",
+            json={"text_id": 1, "key": "key"},
+        )
+        response = requests.post(
+            "http://127.0.0.1:5000/decrypt_text",
+            json={"text_id": 1, "key": "key"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Content-Type"], "application/json")
+        response = requests.get("http://127.0.0.1:5000/get_text/1")
+        self.assertEqual(response.json()["encrypted"], False)
+
 
 if __name__ == "__main__":
     unittest.main()

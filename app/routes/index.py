@@ -75,6 +75,17 @@ def encrypt_text():
         return jsonify({"error": str(e)})
 
 
+@index.route("/decrypt_text", methods=["POST"])
+def decrypt_text():
+    try:
+        text_id = request.json["text_id"]
+        text = TextRepository().find(text_id)
+        EncryptService().decrypt_content(text, request.json["key"])
+        return jsonify({"message": "Text decrypted successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 # ---------------------------------------------------------------------------- #
 #                rutas descartadas pero guardadas por las dudas                #
 # ---------------------------------------------------------------------------- #
