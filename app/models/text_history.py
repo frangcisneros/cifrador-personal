@@ -5,6 +5,8 @@ from typing import List
 
 # ----------------------------- fin importaciones ---------------------------- #
 
+# TODO: crear test de text history y agregar una funcion para poder ver todas las versiones de un texto (esto seria en el repositorio) y agregar una funcion para poder ir cambiando entre las distintas versiones
+
 
 @dataclass(init=False, repr=True, eq=True)
 class TextHistory(db.Model):
