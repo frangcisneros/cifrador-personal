@@ -2,6 +2,7 @@ from app import create_app, db
 from app.routes.index import index
 from app.services import roles
 import os
+from error_handler.handlers import register_error_handlers
 
 app = create_app()
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -9,6 +10,9 @@ app.secret_key = os.environ.get("SECRET_KEY")
 
 # register the blueprint
 app.register_blueprint(index)
+
+# Register error handlers
+register_error_handlers(app)
 
 with app.app_context():
     # Create tables
