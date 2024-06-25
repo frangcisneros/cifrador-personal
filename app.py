@@ -18,8 +18,6 @@ with app.app_context():
     roles.create_user_role()
     roles.create_admin_user()
 
-
-# https://flask.palletsprojects.com/en/3.0.x/appcontext/
 app.app_context().push()
 
 if __name__ == "__main__":
