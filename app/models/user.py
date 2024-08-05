@@ -34,17 +34,8 @@ class User(SoftDeleteMixin, AuditMixin, db.Model):
     )
     # ------------------------------ fin relaciones ------------------------------ #
 
-    def __init__(
-        self,
-        username: str = None,
-        password: str = None,
-        email: str = None,
-        data: UserData = None,
-    ):
-        self.data = data
-        self.username = username
-        self.password = password
-        self.email = email
+    def __init__(self, user_data: UserData):
+        self.data = user_data
 
     def add_role(self, role):
         if role not in self.roles:

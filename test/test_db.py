@@ -1,13 +1,11 @@
 import unittest
 from sqlalchemy import text
-import os
 
 from app import create_app, db
 
 
 class ConnectionTestCase(unittest.TestCase):
     def setUp(self):
-        os.environ["FLASK_CONTEXT"] = "testing"
         # Crea una instancia de la aplicación Flask para pruebas
         self.app = create_app()
         # Crea un contexto de la aplicación y lo activa

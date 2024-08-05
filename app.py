@@ -3,12 +3,6 @@ from app.routes.index import index
 from app.services import roles
 import os
 from error_handler.handlers import register_error_handlers
-import logging
-
-# Ref: https://docs.python.org/3/library/logging.html
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
-)
 
 app = create_app()
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -31,4 +25,4 @@ with app.app_context():
 app.app_context().push()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=False, port=5000)
+    app.run(host="0.0.0.0", port=5000)
