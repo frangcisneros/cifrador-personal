@@ -3,7 +3,6 @@ from app.routes.index import index
 from app.services import roles
 import os
 
-from error_handler.handlers import register_error_handlers
 import logging
 
 # Ref: https://docs.python.org/3/library/logging.html
@@ -18,8 +17,6 @@ app.secret_key = os.environ.get("SECRET_KEY")
 # register the blueprint
 app.register_blueprint(index)
 
-# Register error handlers
-register_error_handlers(app)
 
 with app.app_context():
     # Create tables
