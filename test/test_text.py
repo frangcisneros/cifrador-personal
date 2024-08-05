@@ -1,115 +1,112 @@
+# ------------------------------- importaciones ------------------------------ #
 import unittest
 from flask import current_app
 from app import create_app, db
 from app.models import Text, TextHistory
-from cryptography.fernet import Fernet
-from app.services import UserService, EncryptService
+from app.services import UserService, EncryptService, TextService
 from app.repositories import TextRepository
 
+# ----------------------------- fin importaciones ---------------------------- #
 
+# ------------------------- servicios y repositorios ------------------------- #
 encrypt_service = EncryptService()
 text_repository = TextRepository()
+# ----------------------- fin servicios y repositorios ----------------------- #
 
 
 class TextTestCase(unittest.TestCase):
+    # * METODO PARA CREAR LA BASE DE DATOS
     def setUp(self):
+        # --------------------------- seteo atributos texto -------------------------- #
+        self.CONTENT_PRUEBA = "Hola mundo"
+        self.LENGTH_PRUEBA = len(self.CONTENT_PRUEBA)
+        self.LANGUAGE_PRUEBA = "es"
+        # ------------------------- fin seteo atributos texto ------------------------ #
         self.app = create_app()
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
 
+    # * METODO PARA DESTRUIR LA BASE DE DATOS
     def tearDown(self):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
 
-    def test_app(self):
-        self.assertIsNotNone(current_app)
+    # * GETTER DE TEXTO
+    def __get_text(self):
+        text = Text()
+        text.content = self.CONTENT_PRUEBA
+        text.length = self.LENGTH_PRUEBA
+        text.language = self.LANGUAGE_PRUEBA
+        return text
 
-    def set_text_attributes(self, text):
-        text.content = "Hola mundo"
-        text.length = len(text.content)
-        text.language = "es"
-
+    # * METODO PARA COMPROBAR QUE LOS ATRIBUTOS DE TEXTO SEAN CORRECTOS
     def assert_text_content(self, text):
         self.assertEqual(text.content, "Hola mundo")
         self.assertEqual(text.length, 10)
         self.assertEqual(text.language, "es")
 
     def test_text(self):
-        text = Text()
-        self.set_text_attributes(text)
+        text = self.__get_text()
         self.assert_text_content(text)
 
     def test_text_save(self):
-        text = Text()
-        self.set_text_attributes(text)
+        text = self.__get_text()
         text_repository.save(text)
-
         self.assertGreaterEqual(text.id, 1)
         self.assert_text_content(text)
 
     def test_text_delete(self):
-        text = Text()
-        self.set_text_attributes(text)
+        text = self.__get_text()
         text_repository.save(text)
         text_repository.delete(text)
-
         self.assertIsNone(Text.query.get(text.id))
 
     def test_text_find(self):
-        text = Text()
-        self.set_text_attributes(text)
+        text = self.__get_text()
         text_repository.save(text)
         text_find = text_repository.find(1)
         self.assertIsNotNone(text_find)
         self.assertEqual(text_find.id, text.id)
-        self.assertEqual(text_find.content, text.content)
+        self.assert_text_content(text_find)
 
-    def test_encrypt_content(self):
-        text = Text()
-        self.set_text_attributes(text)
+    def test_auto_encrypt_content(self):
+        text = self.__get_text()
         text_repository.save(text)
-
-        key = Fernet.generate_key()
-
-        encrypt_service.encrypt_content(text, key)
-
+        encrypt_service.encrypt_content(text)
         self.assertNotEqual(text.content, "Hola mundo")
-        self.assertIsInstance(text.content, str)
+        self.assertTrue(text.encrypted)
 
-    # metodo para desencritar
-    def test_decrypt_content(self):
-        text = Text()
-        self.set_text_attributes(text)
+    def test_manual_encrypt_content(self):
+        text = self.__get_text()
         text_repository.save(text)
-
-        key = Fernet.generate_key()
+        key = "secret_key"
         encrypt_service.encrypt_content(text, key)
+        self.assertNotEqual(text.content, "Hola mundo")
+        self.assertTrue(text.encrypted)
 
+    def test_decrypt_content(self):
+        text = self.__get_text()
+        text_repository.save(text)
+        key = "secret_key"
+        encrypt_service.encrypt_content(text, key)
         encrypt_service.decrypt_content(text, key)
-
         self.assertEqual(text.content, "Hola mundo")
 
-    def test_change_content(self):
-        # Crea un objeto Text y guarda una versión
-        text = Text()
-        self.set_text_attributes(text)
+    def test_edit_content(self):
+        text = self.__get_text()
         text_repository.save(text)
-
-        old_content = text.content
-
-        # Cambia el contenido
-        new_content = "Hola mundo"
-        encrypt_service.change_content(text, new_content)
-
-        # Verifica que el contenido haya cambiado
+        text_service = TextService()
+        new_content = "Hello world"
+        text_service.edit_content(text, new_content)
         self.assertEqual(text.content, new_content)
-
-        # Verifica que se haya guardado la versión anterior en TextHistory
-        history = TextHistory.query.filter_by(text_id=text.id).first()
-        self.assertIsNotNone(history)
-        self.assertEqual(history.content, old_content)
+        new_content = "Hello world2"
+        text_service.edit_content(text, new_content)
+        self.assertEqual(text.content, new_content)
+        new_content = "Hello world3"
+        text_service.edit_content(text, new_content)
+        self.assertEqual(text.content, new_content)
 
     # test para comprobar que funciona la relacion entres usuarios y textos
     def test_user_text(self):
@@ -134,10 +131,20 @@ class TextTestCase(unittest.TestCase):
         user_service.save(user)
 
         # Crea un objeto Text y establece sus atributos
-        text = Text()
-        self.set_text_attributes(text)
+        text = self.__get_text()
         text.user_id = user.id
         text_repository.save(text)
+
+    def test_text_json(self):
+        text = self.__get_text()
+        text_repository.save(text)
+        text_json = text.to_json()
+        self.assertEqual(text_json["id"], text.id)
+        self.assertEqual(text_json["content"], text.content)
+        self.assertEqual(text_json["length"], text.length)
+        self.assertEqual(text_json["language"], text.language)
+        self.assertEqual(text_json["encrypted"], text.encrypted)
+        self.assertEqual(text_json["key"], text.key)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,14 @@
+### GET TEXTS
+http://127.0.0.1:5000/all_texts
+
+### GET ONE TEXT
+http://127.0.0.1:5000/get_text/2
+
+### ENCRIPT TEXT
+POST http://127.0.0.1:5000/encrypt_text
+Content-Type: application/json
+
+{
+    "text_id": "2",
+    "key": "None"
+}

@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from .user import User
 
 from app import db
-from typing import List
 
 from app.models.relations import users_roles
 from app import db
