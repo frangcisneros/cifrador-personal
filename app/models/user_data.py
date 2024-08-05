@@ -1,10 +1,7 @@
-# ------------------------------- importaciones ------------------------------ #
 from dataclasses import dataclass
 from app import db
 from app.models.audit_mixin import AuditMixin
 from app.models.soft_delete import SoftDeleteMixin
-
-# ----------------------------- fin importaciones ---------------------------- #
 
 
 @dataclass(init=False, repr=True, eq=True)

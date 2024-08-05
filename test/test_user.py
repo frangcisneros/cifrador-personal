@@ -52,8 +52,11 @@ class UserTestCase(unittest.TestCase):
         self.assertTrue(user.data.phone, self.PHONE_PRUEBA)
 
     def test_user_save(self):
+
         user = self.__get_user()
+
         user_service.save(user)
+
         self.assertGreaterEqual(user.id, 1)
         self.assertTrue(user.email, self.EMAIL_PRUEBA)
         self.assertTrue(user.username, self.USERNAME_PRUEBA)
@@ -66,8 +69,11 @@ class UserTestCase(unittest.TestCase):
         self.assertTrue(user.data.phone, self.PHONE_PRUEBA)
 
     def test_user_delete(self):
+
         user = self.__get_user()
+
         user_service.save(user)
+
         # borro el usuario
         user_service.delete(user)
         self.assertIsNone(user_service.find(user))
