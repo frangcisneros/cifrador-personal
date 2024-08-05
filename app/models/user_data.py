@@ -8,7 +8,7 @@ from app.models.soft_delete import SoftDeleteMixin
 
 
 @dataclass(init=False, repr=True, eq=True)
-class UserData(db.Model, AuditMixin, SoftDeleteMixin):
+class UserData(db.Model, SoftDeleteMixin):
     __tablename__ = "users_data"
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     firstname: str = db.Column(db.String(80), nullable=False)
@@ -28,6 +28,22 @@ class UserData(db.Model, AuditMixin, SoftDeleteMixin):
 
     # Relacion Muchos a Uno bidireccional con Profile
     profile_id = db.Column("profile_id", db.Integer, db.ForeignKey("profiles.id"))
-    profile = db.relationship(
-        "Profile", back_populates="data", foreign_keys=[profile_id]
-    )
+    profile = db.relationship("Profile", back_populates="data")
+
+    def __init__(
+        self,
+        firstname: str = None,
+        lastname: str = None,
+        phone: str = None,
+        address: str = None,
+        city: str = None,
+        country: str = None,
+        profile=None,
+    ):
+        self.firstname = firstname
+        self.lastname = lastname
+        self.phone = phone
+        self.address = address
+        self.city = city
+        self.country = country
+        self.profile = profile
