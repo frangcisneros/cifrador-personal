@@ -4,12 +4,14 @@ from app import create_app
 from app.models import Role
 from app import db
 from app.services import RoleService
+import os
 
 role_service = RoleService()
 
 
 class RoleTestCase(unittest.TestCase):
     def setUp(self):
+        os.environ["FLASK_CONTEXT"] = "testing"
         # Crea una instancia de la aplicación Flask para pruebas
         self.app = create_app()
         # Crea un contexto de la aplicación y lo activa

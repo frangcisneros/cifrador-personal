@@ -31,3 +31,21 @@ class UserData(db.Model, AuditMixin, SoftDeleteMixin):
     profile = db.relationship(
         "Profile", back_populates="data", foreign_keys=[profile_id]
     )
+
+    def __init__(
+        self,
+        firstname: str = None,
+        lastname: str = None,
+        phone: str = None,
+        address: str = None,
+        city: str = None,
+        country: str = None,
+        profile=None,
+    ):
+        self.firstname = firstname
+        self.lastname = lastname
+        self.phone = phone
+        self.address = address
+        self.city = city
+        self.country = country
+        self.profile = profile
