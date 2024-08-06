@@ -20,9 +20,9 @@ class HomeResourceTestCase(unittest.TestCase):
     def test_index(self):
         message = (
             ResponseBuilder()
-            .add_message("Bienvenidos")
-            .add_status_code(200)
-            .add_data({"title": "API Auth"})
+            .set_message("Bienvenidos")
+            .set_status_code(200)
+            .set_data({"title": "API Auth"})
             .build()
         )
         client = self.app.test_client(use_cookies=True)

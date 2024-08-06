@@ -14,7 +14,7 @@ response_schema = ResponseSchema()
 @home.route("/", methods=["GET"])
 def index():
     response_builder = ResponseBuilder()
-    response_builder.add_message("Bienvenidos").add_status_code(200).add_data(
+    response_builder.set_message("Bienvenidos").set_status_code(200).set_data(
         {"title": "API Auth"}
     )
     response = response_builder.build()
