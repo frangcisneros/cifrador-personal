@@ -6,6 +6,7 @@ import os
 import logging
 
 # Ref: https://docs.python.org/3/library/logging.html
+# ? buscar informacion sobre logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )

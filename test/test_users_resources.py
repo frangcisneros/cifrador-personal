@@ -19,7 +19,6 @@ class UserResourceTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    #! no funciona no se por que
     def test_users(self):
         client = self.app.test_client(use_cookies=True)
         response = client.get("http://localhost:5000/api/v1/users")
