@@ -11,6 +11,8 @@ text_repository = TextRepository()
 # ----------------------------- fin repositorios ----------------------------- #
 
 
+# TODO: separar logica encriptado y desencriptado y las key
+# TODO: si el dia de mañana queremos encriptar archivos deberiamos usar el principio de Open/Closed para extender la función de encriptado
 class EncryptService:
     def encrypt_content(self, text: Text, key=None):
         if key is None:
