@@ -1,47 +1,56 @@
-# ------------------------------- importaciones ------------------------------ #
 import unittest
-from flask import current_app
 from app import create_app, db
-from app.models import Text, TextHistory
+from app.models import Text
 from app.services import UserService, EncryptService, TextService
 from app.repositories import TextRepository
+from app.models.user import User
+from app.models.user_data import UserData
 
-# ----------------------------- fin importaciones ---------------------------- #
-
-# ------------------------- servicios y repositorios ------------------------- #
 encrypt_service = EncryptService()
 text_repository = TextRepository()
-# ----------------------- fin servicios y repositorios ----------------------- #
 
 
 class TextTestCase(unittest.TestCase):
-    # * METODO PARA CREAR LA BASE DE DATOS
+    """
+    Pruebas unitarias para la clase Text.
+    Métodos:
+    - setUp: Configura el entorno de prueba.
+    - tearDown: Limpia el entorno de prueba.
+    - __get_text: Crea una instancia de Text con valores predefinidos.
+    - assert_text_content: Verifica que el contenido de Text coincida con los valores predefinidos.
+    - test_text: Prueba la creación de una instancia de Text y verifica su contenido.
+    - test_text_save: Prueba el guardado de una instancia de Text en la base de datos.
+    - test_text_delete: Prueba la eliminación de una instancia de Text de la base de datos.
+    - test_text_find: Prueba la búsqueda de una instancia de Text en la base de datos.
+    - test_auto_encrypt_content: Prueba el cifrado automático del contenido de Text.
+    - test_manual_encrypt_content: Prueba el cifrado manual del contenido de Text.
+    - test_decrypt_content: Prueba la desencriptación del contenido de Text.
+    - test_edit_content: Prueba la edición del contenido de Text.
+    - test_user_text: Prueba la creación de una instancia de Text asociada a un usuario.
+    - test_text_json: Prueba la conversión de una instancia de Text a formato JSON.
+    """
+
     def setUp(self):
-        # --------------------------- seteo atributos texto -------------------------- #
-        self.CONTENT_PRUEBA = "Hola mundo"
-        self.LENGTH_PRUEBA = len(self.CONTENT_PRUEBA)
-        self.LANGUAGE_PRUEBA = "es"
-        # ------------------------- fin seteo atributos texto ------------------------ #
+        self.content = "Hola mundo"
+        self.length = len(self.content)
+        self.language = "es"
         self.app = create_app()
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
 
-    # * METODO PARA DESTRUIR LA BASE DE DATOS
     def tearDown(self):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
 
-    # * GETTER DE TEXTO
     def __get_text(self):
         text = Text()
-        text.content = self.CONTENT_PRUEBA
-        text.length = self.LENGTH_PRUEBA
-        text.language = self.LANGUAGE_PRUEBA
+        text.content = self.content
+        text.length = self.length
+        text.language = self.language
         return text
 
-    # * METODO PARA COMPROBAR QUE LOS ATRIBUTOS DE TEXTO SEAN CORRECTOS
     def assert_text_content(self, text):
         self.assertEqual(text.content, "Hola mundo")
         self.assertEqual(text.length, 10)
@@ -108,12 +117,7 @@ class TextTestCase(unittest.TestCase):
         text_service.edit_content(text, new_content)
         self.assertEqual(text.content, new_content)
 
-    # test para comprobar que funciona la relacion entres usuarios y textos
     def test_user_text(self):
-        from app.models.user import User
-        from app.models.user_data import UserData
-
-        # Crea un objeto UserData con información de prueba
         data = UserData()
         data.firstname = "Pablo"
         data.lastname = "Prats"
@@ -122,7 +126,6 @@ class TextTestCase(unittest.TestCase):
         data.country = "Argentina"
         data.phone = "54260123456789"
 
-        # Crea un objeto User y establece sus atributos
         user = User(data)
         user.email = "test@test.com"
         user.username = "pabloprats"
@@ -130,7 +133,6 @@ class TextTestCase(unittest.TestCase):
         user_service = UserService()
         user_service.save(user)
 
-        # Crea un objeto Text y establece sus atributos
         text = self.__get_text()
         text.user_id = user.id
         text_repository.save(text)

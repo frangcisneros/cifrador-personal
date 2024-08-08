@@ -1,46 +1,47 @@
-# ------------------------------- importaciones ------------------------------ #
 from dataclasses import dataclass
-from .user_data import UserData
 from app import db
 from app.models.relations import users_roles
 from app.models.audit_mixin import AuditMixin
 from app.models.soft_delete import SoftDeleteMixin
 
-# ----------------------------- fin importaciones ---------------------------- #
 
-
-@dataclass(init=False, repr=True, eq=True)
+@dataclass
 class User(SoftDeleteMixin, AuditMixin, db.Model):
-    __tablename__ = "users"
-    # --------------------------- columnas de la tabla --------------------------- #
-    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username: str = db.Column(db.String(80), unique=True, nullable=False)
-    password: str = db.Column("password", db.String(255), nullable=False)
-    email: str = db.Column(db.String(120), unique=True, nullable=False)
-    role_id: int = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=True)
-    # ------------------------- fin columnas de la tabla ------------------------- #
+    """
+    Clase que representa un usuario en el sistema.
+    Atributos:
+    - id (int): Identificador único del usuario.
+    - username (str): Nombre de usuario del usuario.
+    - password (str): Contraseña del usuario.
+    - email (str): Correo electrónico del usuario.
+    - role_id (int): ID del rol del usuario.
+    - roles (list): Lista de roles asociados al usuario.
+    - users_rs (list): Lista de textos asociados al usuario.
+    - data (UserData): Datos adicionales del usuario.
+    Métodos:
+    - __init__(username, password, email, data): Constructor de la clase User.
+    - add_role(role): Agrega un rol al usuario.
+    - remove_role(role): Remueve un rol del usuario.
+    """
 
-    # -------------------------------- relaciones -------------------------------- #
-    # * Relacion Muchos a Muchos bidireccional con Role
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=True)
+
     roles = db.relationship("Role", secondary=users_roles, back_populates="users")
-    # * Relación con la tabla 'Text' (texto), establecida a través de la propiedad 'user' en la clase Text
     users_rs = db.relationship("Text", backref="user", lazy=True)
-    # * Relación con la tabla 'UserData' (datos de usuario), establecida a través de la propiedad 'user' en la clase UserData
     data = db.relationship(
         "UserData",
         uselist=False,
         back_populates="user",
         foreign_keys="[UserData.user_id]",
     )
-    # ------------------------------ fin relaciones ------------------------------ #
 
-    def __init__(
-        self,
-        username: str = None,
-        password: str = None,
-        email: str = None,
-        data: UserData = None,
-    ):
+    def __init__(self, username=None, password=None, email=None, data=None):
         self.data = data
         self.username = username
         self.password = password
