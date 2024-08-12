@@ -72,13 +72,15 @@ class UsersRoleTestCase(unittest.TestCase):
         self.assertEqual(user.roles[1].name, self.ROL_USER)
 
     def __get_user(self):
-        data = UserData()
-        data.firstname = self.FIRSTNAME_PRUEBA
-        data.lastname = self.LASTNAME_PRUEBA
-        data.phone = self.PHONE_PRUEBA
-        data.address = self.ADDRESS_PRUEBA
-        data.city = self.CITY_PRUEBA
-        data.country = self.COUNTRY_PRUEBA
+
+        data = UserData(
+            firstname=self.FIRSTNAME_PRUEBA,
+            lastname=self.LASTNAME_PRUEBA,
+            phone=self.PHONE_PRUEBA,
+            address=self.ADDRESS_PRUEBA,
+            city=self.CITY_PRUEBA,
+            country=self.COUNTRY_PRUEBA,
+        )
 
         user = User()
         user.data = data

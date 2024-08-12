@@ -118,13 +118,14 @@ class TextTestCase(unittest.TestCase):
         self.assertEqual(text.content, new_content)
 
     def test_user_text(self):
-        data = UserData()
-        data.firstname = "Pablo"
-        data.lastname = "Prats"
-        data.address = "Address 1234"
-        data.city = "San Rafael"
-        data.country = "Argentina"
-        data.phone = "54260123456789"
+        data = UserData(
+            firstname="Pablo",
+            lastname="Prats",
+            address="Address 1234",
+            city="San Rafael",
+            country="Argentina",
+            phone="54260123456789",
+        )
 
         user = User(data)
         user.email = "test@test.com"
