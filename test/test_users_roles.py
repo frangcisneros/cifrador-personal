@@ -11,6 +11,9 @@ user_service = UserService()
 
 
 class UsersRoleTestCase(unittest.TestCase):
+    """
+    Aplicar DRY, KISS y YAGNI
+    """
 
     def setUp(self):
         os.environ["FLASK_CONTEXT"] = "testing"
