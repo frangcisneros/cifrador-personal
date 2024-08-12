@@ -1,6 +1,5 @@
 from app import create_app, db
 from app.routes.index import index
-from app.services import roles
 import os
 
 import logging
@@ -20,12 +19,8 @@ app.register_blueprint(index)
 
 
 with app.app_context():
-    # Create tables
+    # create tables
     db.create_all()
-    # TODO: NO SE SI LAS ESTOY LLAMANDO CONSTANTEMENTE TENGO QUE BUSCAR LA FORMA DE LLAMARLAS UNA SOLA VEZ
-    roles.create_admin_role()
-    roles.create_user_role()
-    roles.create_admin_user()
 
 app.app_context().push()
 

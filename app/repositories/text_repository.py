@@ -4,6 +4,18 @@ from app import db
 
 
 class TextRepository:
+    """
+    Clase que representa un repositorio de texto.
+    Métodos:
+    - save(text: Text) -> Text: Guarda un objeto de texto en la base de datos.
+    - delete(text: Text) -> None: Elimina un objeto de texto de la base de datos.
+    - find(id: int): Busca un objeto de texto por su ID en la base de datos.
+    - all() -> List["Text"]: Obtiene todos los objetos de texto de la base de datos.
+    - find_by(**kwargs) -> List["Text"]: Busca objetos de texto en la base de datos según los criterios proporcionados.
+    Atributos:
+    - No hay atributos definidos en esta clase.
+    """
+
     def save(self, text: Text) -> Text:
         db.session.add(text)
         db.session.commit()

@@ -11,6 +11,25 @@ class ResponseMessage:
 
 @dataclass
 class ResponseBuilder:
+    """
+    Clase ResponseBuilder: Construye un objeto ResponseMessage con los atributos proporcionados.
+    Atributos:
+        _message (str): El mensaje de la respuesta.
+        _status_code (int): El código de estado de la respuesta.
+        _data (Dict): Los datos asociados a la respuesta.
+    Métodos:
+        set_message(message: str) -> ResponseBuilder:
+            Establece el mensaje de la respuesta y devuelve una instancia de ResponseBuilder.
+        set_status_code(status_code: int) -> ResponseBuilder:
+            Establece el código de estado de la respuesta y devuelve una instancia de ResponseBuilder.
+        set_data(data: Dict) -> ResponseBuilder:
+            Establece los datos asociados a la respuesta y devuelve una instancia de ResponseBuilder.
+        build() -> ResponseMessage:
+            Construye y devuelve un objeto ResponseMessage con los atributos proporcionados.
+    Raises:
+        ValueError: Se produce si no se proporciona el mensaje o el código de estado.
+    """
+
     _message: Optional[str] = field(default=None, init=False)
     _status_code: Optional[int] = field(default=None, init=False)
     _data: Optional[Dict] = field(default=None, init=False)
