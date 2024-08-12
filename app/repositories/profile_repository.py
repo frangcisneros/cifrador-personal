@@ -4,6 +4,15 @@ from app import db
 
 
 class ProfileRepository:
+    """
+    Clase que representa un repositorio de perfiles.
+    Métodos:
+    - save(profile: Profile) -> Profile: Guarda un perfil en la base de datos y lo devuelve.
+    - update(profile: Profile, id: int) -> Profile: Actualiza un perfil existente en la base de datos y lo devuelve.
+    - delete(profile: Profile) -> None: Elimina un perfil de la base de datos.
+    - all() -> List[Profile]: Devuelve una lista de todos los perfiles en la base de datos.
+    - find(id: int) -> Profile: Busca un perfil por su ID en la base de datos y lo devuelve.
+    """
 
     def save(self, profile: Profile) -> Profile:
         db.session.add(profile)

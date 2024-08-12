@@ -4,8 +4,17 @@ from app import db
 
 @dataclass(init=False, repr=True, eq=True)
 class BaseModel(db.Model):
+    """
+    Clase base para los modelos de la base de datos.
+    Atributos:
+    - __abstract__ (bool): Indica si la clase es abstracta o no.
+    Métodos:
+    - to_json(self): Convierte el objeto a un diccionario JSON
+    """
+
     __abstract__ = True
 
+    # TODO: implementar mapping y resources para hacer esto
     def to_json(self):
         return {
             column.name: getattr(self, column.name) for column in self.__table__.columns
@@ -27,7 +36,7 @@ class Text(BaseModel):
     - histories: Relación con los historiales de cambios del texto.
     Métodos:
     - __init__(self, content: str = "default text", language: str = "es"): Constructor de la clase.
-    - to_json(self): Convierte el objeto a un diccionario JSON.
+    - to_json(self): Convierte el objeto a un diccionario JSON. Heredado de una clase base.
     """
 
     __tablename__ = "texts"

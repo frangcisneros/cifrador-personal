@@ -5,6 +5,8 @@ from app.repositories import TextRepository
 
 index = Blueprint("index", __name__)
 
+# TODO: Seprarar las rutas hacia resources y mapping, aca esta todo mezclado
+
 username_saved = None
 password_saved = None
 user = None

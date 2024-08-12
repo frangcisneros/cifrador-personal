@@ -33,13 +33,10 @@ class UserData(db.Model, AuditMixin, SoftDeleteMixin):
     address: str = db.Column(db.String(120), nullable=False)
     city: str = db.Column(db.String(120), nullable=False)
     country: str = db.Column(db.String(120), nullable=False)
-
     user_id = db.Column("user_id", db.Integer, db.ForeignKey("users.id"))
-
     user = db.relationship(
         "User", back_populates="data", foreign_keys=[user_id], uselist=False
     )
-
     profile_id = db.Column("profile_id", db.Integer, db.ForeignKey("profiles.id"))
     profile = db.relationship(
         "Profile", back_populates="data", foreign_keys=[profile_id]
