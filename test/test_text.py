@@ -14,8 +14,10 @@ class TextTestCase(unittest.TestCase):
     """
     Pruebas unitarias para la clase Text.
     Métodos:
-    - setUp: Configura el entorno de prueba.
-    - tearDown: Limpia el entorno de prueba.
+    - setUpClass: Configura el entorno de prueba una vez para todas las pruebas.
+    - tearDownClass: Limpia el entorno de prueba una vez finalizadas todas las pruebas.
+    - setUp: Configura el entorno de prueba antes de cada prueba.
+    - tearDown: Limpia el entorno de prueba después de cada prueba.
     - __get_text: Crea una instancia de Text con valores predefinidos.
     - assert_text_content: Verifica que el contenido de Text coincida con los valores predefinidos.
     - test_text: Prueba la creación de una instancia de Text y verifica su contenido.
@@ -30,19 +32,25 @@ class TextTestCase(unittest.TestCase):
     - test_text_json: Prueba la conversión de una instancia de Text a formato JSON.
     """
 
+    @classmethod
+    def setUpClass(cls):
+        cls.app = create_app()
+        cls.app_context = cls.app.app_context()
+        cls.app_context.push()
+        db.create_all()
+
+    @classmethod
+    def tearDownClass(cls):
+        db.drop_all()
+        cls.app_context.pop()
+
     def setUp(self):
         self.content = "Hola mundo"
         self.length = len(self.content)
         self.language = "es"
-        self.app = create_app()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        db.create_all()
 
     def tearDown(self):
         db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
 
     def __get_text(self):
         text = Text()
@@ -52,9 +60,9 @@ class TextTestCase(unittest.TestCase):
         return text
 
     def assert_text_content(self, text):
-        self.assertEqual(text.content, "Hola mundo")
-        self.assertEqual(text.length, 10)
-        self.assertEqual(text.language, "es")
+        self.assertEqual(text.content, self.content)
+        self.assertEqual(text.length, self.length)
+        self.assertEqual(text.language, self.language)
 
     def test_text(self):
         text = self.__get_text()
@@ -75,7 +83,7 @@ class TextTestCase(unittest.TestCase):
     def test_text_find(self):
         text = self.__get_text()
         text_repository.save(text)
-        text_find = text_repository.find(1)
+        text_find = text_repository.find(text.id)  # Use the saved text's ID
         self.assertIsNotNone(text_find)
         self.assertEqual(text_find.id, text.id)
         self.assert_text_content(text_find)
@@ -84,7 +92,7 @@ class TextTestCase(unittest.TestCase):
         text = self.__get_text()
         text_repository.save(text)
         encrypt_service.encrypt_content(text)
-        self.assertNotEqual(text.content, "Hola mundo")
+        self.assertNotEqual(text.content, self.content)
         self.assertTrue(text.encrypted)
 
     def test_manual_encrypt_content(self):
@@ -92,7 +100,7 @@ class TextTestCase(unittest.TestCase):
         text_repository.save(text)
         key = "secret_key"
         encrypt_service.encrypt_content(text, key)
-        self.assertNotEqual(text.content, "Hola mundo")
+        self.assertNotEqual(text.content, self.content)
         self.assertTrue(text.encrypted)
 
     def test_decrypt_content(self):
@@ -101,7 +109,7 @@ class TextTestCase(unittest.TestCase):
         key = "secret_key"
         encrypt_service.encrypt_content(text, key)
         encrypt_service.decrypt_content(text, key)
-        self.assertEqual(text.content, "Hola mundo")
+        self.assertEqual(text.content, self.content)
 
     def test_edit_content(self):
         text = self.__get_text()

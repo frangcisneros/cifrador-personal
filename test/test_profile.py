@@ -16,39 +16,32 @@ class ProfileTestCase(unittest.TestCase):
         self.app_context.push()
         db.create_all()
         self.NAME = "Client"
+        self.profile = Profile(name=self.NAME)
+        profile_service.save(self.profile)
 
     def tearDown(self):
+        profile_service.delete(self.profile)
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
 
     def test_profile_save(self):
-        profile = Profile(name=self.NAME)
-        profile_service.save(profile)
-        self.assertGreaterEqual(profile.id, 1)
-        self.assertEqual(profile.name, self.NAME)
+        self.assertGreaterEqual(self.profile.id, 1)
+        self.assertEqual(self.profile.name, self.NAME)
 
     def test_profile_delete(self):
-        profile = Profile(name=self.NAME)
-        profile_service.save(profile)
-        profile_service.delete(profile)
-        self.assertIsNone(profile_service.find(profile))
+        profile_service.delete(self.profile)
+        self.assertIsNone(profile_service.find(self.profile))
 
     def test_profile_update(self):
-        profile = Profile(name=self.NAME)
-        profile_service.save(profile)
-        profile.name = "Client Updated"
-        profile_service.update(profile, profile.id)
-        self.assertEqual(profile.name, "Client Updated")
+        self.profile.name = "Client Updated"
+        profile_service.update(self.profile, self.profile.id)
+        self.assertEqual(self.profile.name, "Client Updated")
 
     def test_profile_find(self):
-        profile = Profile(name=self.NAME)
-        profile_service.save(profile)
-        profile = profile_service.find(profile.id)
+        profile = profile_service.find(self.profile.id)
         self.assertIsNotNone(profile)
 
     def test_all(self):
-        profile = Profile(name=self.NAME)
-        profile_service.save(profile)
         profiles = profile_service.all()
         self.assertGreaterEqual(len(profiles), 1)
