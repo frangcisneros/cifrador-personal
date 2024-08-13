@@ -4,22 +4,22 @@ import os
 
 import logging
 
+# TODO: leer el link de referencia sobre logging
 # Ref: https://docs.python.org/3/library/logging.html
-# ? buscar informacion sobre logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 
 app = create_app()
+# TODO: probablemente pueda iniciar la secret key en el __init__ de la app
 app.secret_key = os.environ.get("SECRET_KEY")
 
 
-# register the blueprint
+# TODO: cambiar el registro al __init__ de la app y ver si no se rompe nada
 app.register_blueprint(index)
 
 
 with app.app_context():
-    # create tables
     db.create_all()
 
 app.app_context().push()
